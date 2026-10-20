@@ -1,0 +1,395 @@
+---
+import { getCollection, type CollectionEntry } from 'astro:content';
+import BaseHead from '../../components/BaseHead.astro';
+import Footer from '../../components/Footer.astro';
+import Header from '../../components/Header.astro';
+import ArticleCard from '../../components/ArticleCard.astro';
+import MartialBadge from '../../components/MartialBadge.astro';
+import { DISCIPLINES_LIST, DISCIPLINES_MAP, type DisciplineInfo } from '../../data/disciplines';
+
+export async function getStaticPaths() {
+  const allPosts = await getCollection('blog');
+  
+  return DISCIPLINES_LIST.map((disc) => {
+    const disciplinePosts = allPosts
+      .filter((post) => post.data.disciplina === disc.id)
+      .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+    return {
+      params: { disciplina: disc.id },
+      props: {
+        discipline: disc,
+        posts: disciplinePosts,
+        otherDisciplines: DISCIPLINES_LIST.filter((d) => d.id !== disc.id),
+      },
+    };
+  });
+}
+
+interface Props {
+  discipline: DisciplineInfo;
+  posts: CollectionEntry<'blog'>[];
+  otherDisciplines: DisciplineInfo[];
+}
+
+const { discipline, posts, otherDisciplines } = Astro.props;
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <BaseHead
+      title={`${discipline.name} — Guías, Biomecánica & Historia | DOJO & OCTAGON`}
+      description={discipline.description}
+    />
+  </head>
+  <body>
+    <Header />
+    <main>
+      <!-- Cabecera Temática de la Disciplina -->
+      <section
+        class="discipline-hero"
+        style={`--theme-accent: ${discipline.accentColor};`}
+      >
+        <div class="discipline-hero-glow" aria-hidden="true"></div>
+
+        <nav class="breadcrumbs" aria-label="Navegación de migas de pan">
+          <a href="/">Inicio</a>
+          <span class="breadcrumb-separator" aria-hidden="true">/</span>
+          <a href="/blog/">Disciplinas</a>
+          <span class="breadcrumb-separator" aria-hidden="true">/</span>
+          <span class="breadcrumb-current" aria-current="page">{discipline.shortName}</span>
+        </nav>
+
+        <div class="hero-content">
+          <div class="hero-top-row">
+            <MartialBadge disciplina={discipline.id} size="lg" />
+            {discipline.kanji && <span class="kanji-glyph">{discipline.kanji}</span>}
+          </div>
+
+          <h1 class="discipline-title">{discipline.name}</h1>
+          <p class="discipline-tagline">"{discipline.tagline}"</p>
+
+          <p class="discipline-desc">{discipline.description}</p>
+
+          <div class="discipline-meta-cards">
+            <div class="meta-card">
+              <span class="meta-label">Origen Histórico</span>
+              <span class="meta-val">📍 {discipline.origin}</span>
+            </div>
+            <div class="meta-card">
+              <span class="meta-label">Artículos Publicados</span>
+              <span class="meta-val">📚 {posts.length} {posts.length === 1 ? 'Guía' : 'Guías'}</span>
+            </div>
+            <div class="meta-card">
+              <span class="meta-label">Máxima del Arte</span>
+              <span class="meta-val quote-val">"{discipline.quote}"</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Grid de Artículos de la Disciplina -->
+      <section class="discipline-articles-section">
+        <div class="section-title-wrap">
+          <h2 class="section-title">Publicaciones sobre {discipline.shortName}</h2>
+          <span class="articles-count">{posts.length} {posts.length === 1 ? 'artículo' : 'artículos'}</span>
+        </div>
+
+        {posts.length > 0 ? (
+          <div class="articles-grid">
+            {posts.map((post) => (
+              <ArticleCard post={post} />
+            ))}
+          </div>
+        ) : (
+          <div class="no-posts-box">
+            <span class="no-posts-icon">{discipline.icon}</span>
+            <h3>Próximamente más análisis técnicos</h3>
+            <p>Estamos redactando nuevas guías biomecánicas y entrevistas para {discipline.name}.</p>
+            <a href="/blog/" class="btn-back">Ver otros artículos</a>
+          </div>
+        )}
+      </section>
+
+      <!-- Explorar Otras Disciplinas -->
+      <section class="other-disciplines-section">
+        <h3 class="other-title">Explorar Otras Disciplinas</h3>
+        <div class="other-grid">
+          {otherDisciplines.map((other) => (
+            <a
+              href={`/artes/${other.id}/`}
+              class="other-card"
+              style={`--other-accent: ${other.accentColor};`}
+            >
+              <span class="other-icon">{other.icon}</span>
+              <div class="other-info">
+                <span class="other-name">{other.name}</span>
+                <span class="other-tagline">{other.tagline}</span>
+              </div>
+              <span class="other-arrow" aria-hidden="true">→</span>
+            </a>
+          ))}
+        </div>
+      </section>
+    </main>
+    <Footer />
+  </body>
+</html>
+
+<style>
+  .discipline-hero {
+    position: relative;
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-medium);
+    border-radius: var(--radius-lg);
+    padding: 2.5rem 2.5rem 3rem;
+    margin-bottom: 3.5rem;
+    overflow: hidden;
+  }
+
+  .discipline-hero-glow {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 320px;
+    height: 320px;
+    background: radial-gradient(circle, var(--theme-accent) 0%, transparent 70%);
+    opacity: 0.12;
+    pointer-events: none;
+  }
+
+  @media (max-width: 768px) {
+    .discipline-hero {
+      padding: 1.5rem 1.25rem 2rem;
+    }
+  }
+
+  .breadcrumbs {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-bottom: 1.75rem;
+  }
+
+  .breadcrumbs a {
+    color: var(--text-muted);
+    text-decoration: none;
+  }
+
+  .breadcrumbs a:hover {
+    color: var(--text-primary);
+  }
+
+  .breadcrumb-separator {
+    opacity: 0.4;
+  }
+
+  .breadcrumb-current {
+    color: var(--text-secondary);
+  }
+
+  .hero-top-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+  }
+
+  .kanji-glyph {
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: var(--text-dim);
+    letter-spacing: 0.15em;
+  }
+
+  .discipline-title {
+    font-size: clamp(2.2rem, 4vw, 3.2rem);
+    line-height: 1.15;
+    margin: 0 0 0.5rem;
+  }
+
+  .discipline-tagline {
+    font-size: 1.2rem;
+    font-style: italic;
+    color: var(--theme-accent);
+    margin: 0 0 1.25rem;
+  }
+
+  .discipline-desc {
+    font-size: 1.05rem;
+    color: var(--text-secondary);
+    line-height: 1.65;
+    max-width: 820px;
+    margin: 0 0 2rem;
+  }
+
+  .discipline-meta-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+    border-top: 1px solid var(--border-subtle);
+    padding-top: 1.75rem;
+  }
+
+  .meta-card {
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    padding: 0.85rem 1.1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .meta-label {
+    font-size: 0.725rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+  }
+
+  .meta-val {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  .quote-val {
+    font-style: italic;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+  }
+
+  /* Artículos de la Disciplina */
+  .discipline-articles-section {
+    margin-bottom: 4rem;
+  }
+
+  .section-title-wrap {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+    border-bottom: 1px solid var(--border-subtle);
+    padding-bottom: 0.75rem;
+  }
+
+  .section-title {
+    font-size: 1.75rem;
+    margin: 0;
+  }
+
+  .articles-count {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+  }
+
+  .articles-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+    gap: 2rem;
+  }
+
+  @media (max-width: 680px) {
+    .articles-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .no-posts-box {
+    text-align: center;
+    padding: 3.5rem 1.5rem;
+    background: var(--bg-card);
+    border-radius: var(--radius-lg);
+    border: 1px dashed var(--border-medium);
+  }
+
+  .no-posts-icon {
+    font-size: 3rem;
+    margin-bottom: 0.75rem;
+    display: block;
+  }
+
+  .btn-back {
+    display: inline-block;
+    margin-top: 1rem;
+    padding: 0.6rem 1.25rem;
+    background-color: var(--accent-brand);
+    color: #ffffff;
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+
+  /* Otras disciplinas */
+  .other-disciplines-section {
+    padding-top: 2rem;
+    border-top: 1px solid var(--border-subtle);
+  }
+
+  .other-title {
+    font-size: 1.25rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .other-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1rem;
+  }
+
+  .other-card {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    text-decoration: none;
+    transition: all var(--transition-fast);
+  }
+
+  .other-card:hover {
+    border-color: var(--other-accent);
+    transform: translateY(-2px);
+    background-color: var(--bg-card-hover);
+  }
+
+  .other-icon {
+    font-size: 1.5rem;
+  }
+
+  .other-info {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+
+  .other-name {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+
+  .other-tagline {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+  }
+
+  .other-arrow {
+    color: var(--text-muted);
+    font-size: 1.1rem;
+    transition: transform var(--transition-fast);
+  }
+
+  .other-card:hover .other-arrow {
+    transform: translateX(4px);
+    color: var(--other-accent);
+  }
+</style>

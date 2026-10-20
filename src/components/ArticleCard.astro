@@ -1,0 +1,274 @@
+---
+import { Image } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+import FormattedDate from './FormattedDate.astro';
+import MartialBadge from './MartialBadge.astro';
+import { getDiscipline } from '../data/disciplines';
+
+export interface Props {
+  post: CollectionEntry<'blog'>;
+  variant?: 'featured' | 'compact' | 'standard';
+}
+
+const { post, variant = 'standard' } = Astro.props;
+const { title, description, pubDate, disciplina, heroImage, readingTime, autor, tags, dificultad } = post.data;
+
+const discInfo = getDiscipline(disciplina);
+const borderClass = discInfo?.borderClass ?? '';
+---
+
+<article
+  class={`article-card ${variant} ${borderClass}`}
+  data-disciplina={disciplina}
+  data-tipo={post.data.tipo}
+>
+  <a href={`/blog/${post.id}/`} class="card-link" aria-label={`Leer artículo: ${title}`}>
+    <div class="image-wrapper">
+      {heroImage ? (
+        <Image
+          src={heroImage}
+          alt={title}
+          width={variant === 'featured' ? 840 : 560}
+          height={variant === 'featured' ? 420 : 280}
+          class="card-img"
+        />
+      ) : (
+        <div class="image-placeholder">
+          <span class="placeholder-icon">{discInfo?.icon ?? '🥋'}</span>
+        </div>
+      )}
+      <div class="badge-overlay">
+        <MartialBadge disciplina={disciplina} size="sm" />
+      </div>
+    </div>
+  </a>
+
+  <div class="card-content">
+    <div class="card-meta">
+      <span class="meta-item">
+        <FormattedDate date={pubDate} />
+      </span>
+      <span class="meta-dot" aria-hidden="true">•</span>
+      <span class="meta-item reading-time">⏱️ {readingTime}</span>
+      {dificultad && (
+        <>
+          <span class="meta-dot" aria-hidden="true">•</span>
+          <span class="meta-item difficulty">{dificultad}</span>
+        </>
+      )}
+    </div>
+
+    <h3 class="card-title">
+      <a href={`/blog/${post.id}/`}>{title}</a>
+    </h3>
+
+    <p class="card-description">{description}</p>
+
+    <div class="card-footer">
+      <div class="author-info">
+        <span class="author-icon">👤</span>
+        <div class="author-text">
+          <span class="author-name">{autor.name}</span>
+          <span class="author-role">{autor.role}</span>
+        </div>
+      </div>
+      <a href={`/blog/${post.id}/`} class="read-more">
+        Leer <span aria-hidden="true">→</span>
+      </a>
+    </div>
+  </div>
+</article>
+
+<style>
+  .article-card {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: transform var(--transition-base), box-shadow var(--transition-base), border-color var(--transition-base);
+    position: relative;
+  }
+
+  .article-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-card);
+    background-color: var(--bg-card-hover);
+  }
+
+  .image-wrapper {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    background-color: var(--bg-secondary);
+  }
+
+  .card-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+  }
+
+  .article-card:hover .card-img {
+    transform: scale(1.04);
+  }
+
+  .image-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, var(--bg-secondary), var(--bg-card));
+  }
+
+  .placeholder-icon {
+    font-size: 3rem;
+    opacity: 0.7;
+  }
+
+  .badge-overlay {
+    position: absolute;
+    top: 0.85rem;
+    left: 0.85rem;
+    z-index: 2;
+  }
+
+  .card-content {
+    padding: 1.35rem 1.35rem 1.25rem;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+
+  .card-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-bottom: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .meta-dot {
+    opacity: 0.5;
+  }
+
+  .difficulty {
+    text-transform: capitalize;
+  }
+
+  .card-title {
+    font-size: 1.25rem;
+    line-height: 1.35;
+    margin: 0 0 0.65rem 0;
+  }
+
+  .card-title a {
+    color: var(--text-primary);
+  }
+
+  .card-title a:hover {
+    color: #fda4af;
+  }
+
+  .card-description {
+    font-size: 0.925rem;
+    line-height: 1.55;
+    color: var(--text-secondary);
+    margin: 0 0 1.25rem 0;
+    flex: 1;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 0.85rem;
+    border-top: 1px solid var(--border-subtle);
+    margin-top: auto;
+  }
+
+  .author-info {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .author-icon {
+    font-size: 1.1rem;
+    opacity: 0.8;
+  }
+
+  .author-text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.15;
+  }
+
+  .author-name {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  .author-role {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+  }
+
+  .read-more {
+    font-size: 0.825rem;
+    font-weight: 600;
+    color: var(--accent-brand);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    transition: gap var(--transition-fast), color var(--transition-fast);
+  }
+
+  .article-card:hover .read-more {
+    color: #fda4af;
+    gap: 0.45rem;
+  }
+
+  /* Variante Destacada */
+  .article-card.featured {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: 1.15fr 1fr;
+  }
+
+  @media (max-width: 860px) {
+    .article-card.featured {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .article-card.featured .image-wrapper {
+    aspect-ratio: 16 / 10;
+    height: 100%;
+  }
+
+  .article-card.featured .card-content {
+    padding: 2rem;
+  }
+
+  .article-card.featured .card-title {
+    font-size: 1.75rem;
+    margin-bottom: 0.85rem;
+  }
+
+  .article-card.featured .card-description {
+    font-size: 1.05rem;
+    -webkit-line-clamp: 4;
+  }
+</style>

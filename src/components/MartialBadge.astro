@@ -1,0 +1,78 @@
+---
+import { getDiscipline, type DisciplineId } from '../data/disciplines';
+
+export interface Props {
+  disciplina: DisciplineId | string;
+  size?: 'sm' | 'md' | 'lg';
+  asLink?: boolean;
+}
+
+const { disciplina, size = 'md', asLink = false } = Astro.props;
+const info = getDiscipline(disciplina);
+
+const sizeClasses = {
+  sm: 'text-xs px-2 py-0.5',
+  md: 'text-xs px-2.5 py-1',
+  lg: 'text-sm px-3.5 py-1.5 font-semibold',
+}[size];
+
+const badgeClass = info ? info.badgeClass : 'badge-general';
+const name = info ? info.name : disciplina;
+const icon = info ? info.icon : '🥋';
+---
+
+{asLink ? (
+  <a
+    href={`/artes/${disciplina}/`}
+    class={`martial-badge ${badgeClass} ${sizeClasses}`}
+    title={`Ver artículos de ${name}`}
+  >
+    <span class="badge-icon">{icon}</span>
+    <span class="badge-text">{name}</span>
+  </a>
+) : (
+  <span class={`martial-badge ${badgeClass} ${sizeClasses}`}>
+    <span class="badge-icon">{icon}</span>
+    <span class="badge-text">{name}</span>
+  </span>
+)}
+
+<style>
+  .martial-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-radius: var(--radius-full);
+    line-height: 1;
+    transition: transform var(--transition-fast), opacity var(--transition-fast);
+    white-space: nowrap;
+    text-decoration: none;
+  }
+
+  .martial-badge:hover {
+    transform: translateY(-1px);
+    opacity: 0.95;
+  }
+
+  .text-xs { font-size: 0.725rem; }
+  .text-sm { font-size: 0.85rem; }
+  .px-2 { padding-left: 0.5rem; padding-right: 0.5rem; }
+  .py-0\.5 { padding-top: 0.2rem; padding-bottom: 0.2rem; }
+  .px-2\.5 { padding-left: 0.65rem; padding-right: 0.65rem; }
+  .py-1 { padding-top: 0.3rem; padding-bottom: 0.3rem; }
+  .px-3\.5 { padding-left: 0.85rem; padding-right: 0.85rem; }
+  .py-1\.5 { padding-top: 0.45rem; padding-bottom: 0.45rem; }
+
+  .badge-general {
+    color: var(--text-secondary);
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+  }
+
+  .badge-icon {
+    font-size: 1.1em;
+  }
+</style>

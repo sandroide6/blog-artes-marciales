@@ -1,0 +1,242 @@
+---
+import { SITE_TITLE } from '../consts';
+import HeaderLink from './HeaderLink.astro';
+---
+
+<header class="martial-header">
+	<nav class="martial-nav">
+		<div class="brand-group">
+			<a href="/" class="brand-logo" aria-label="Ir al inicio de Dojo & Octagon">
+				<span class="brand-emblem" aria-hidden="true">🥋</span>
+				<div class="brand-text">
+					<span class="brand-title">{SITE_TITLE}</span>
+					<span class="brand-sub">ARTES MARCIALES & COMBATE</span>
+				</div>
+			</a>
+		</div>
+
+		<div class="nav-links">
+			<HeaderLink href="/">Inicio</HeaderLink>
+			<HeaderLink href="/blog/">Artículos</HeaderLink>
+			<div class="nav-dropdown">
+				<span class="dropdown-trigger">
+					Disciplinas <span class="arrow-down" aria-hidden="true">▾</span>
+				</span>
+				<div class="dropdown-menu">
+					<a href="/artes/karate/">🥋 Karate-Do</a>
+					<a href="/artes/bjj/">🤼 Brazilian Jiu-Jitsu</a>
+					<a href="/artes/muay-thai/">🥊 Muay Thai</a>
+					<a href="/artes/boxeo/">⚡ Boxeo Clásico</a>
+					<a href="/artes/mma/">⚔️ Artes Marciales Mixtas</a>
+				</div>
+			</div>
+			<HeaderLink href="/about/">Filosofía & Budo</HeaderLink>
+		</div>
+
+		<div class="header-action">
+			<a href="/blog/" class="header-cta-btn">
+				<span>Explorar</span>
+				<span aria-hidden="true">→</span>
+			</a>
+		</div>
+	</nav>
+</header>
+
+<style>
+	.martial-header {
+		position: sticky;
+		top: 0;
+		z-index: 50;
+		background: rgba(11, 14, 19, 0.92);
+		backdrop-filter: blur(12px);
+		-webkit-backdrop-filter: blur(12px);
+		border-bottom: 1px solid var(--border-subtle);
+		width: 100%;
+	}
+
+	.martial-nav {
+		max-width: var(--container-width);
+		margin: 0 auto;
+		padding: 0.85rem 1.25rem;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 1.5rem;
+	}
+
+	.brand-group {
+		display: flex;
+		align-items: center;
+	}
+
+	.brand-logo {
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
+		text-decoration: none;
+	}
+
+	.brand-emblem {
+		font-size: 1.75rem;
+		line-height: 1;
+		filter: drop-shadow(0 2px 6px rgba(225, 29, 72, 0.4));
+	}
+
+	.brand-text {
+		display: flex;
+		flex-direction: column;
+	}
+
+	.brand-title {
+		font-size: 1.15rem;
+		font-weight: 800;
+		letter-spacing: 0.04em;
+		color: var(--text-primary);
+		line-height: 1.1;
+	}
+
+	.brand-sub {
+		font-size: 0.65rem;
+		font-weight: 700;
+		letter-spacing: 0.12em;
+		color: var(--accent-brand);
+		line-height: 1;
+		margin-top: 2px;
+	}
+
+	.nav-links {
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
+	}
+
+	.nav-links :global(a) {
+		color: var(--text-secondary);
+		padding: 0.45rem 0.85rem;
+		font-size: 0.925rem;
+		font-weight: 600;
+		border-radius: var(--radius-sm);
+		text-decoration: none;
+		transition: all var(--transition-fast);
+	}
+
+	.nav-links :global(a:hover) {
+		color: var(--text-primary);
+		background-color: var(--bg-card);
+	}
+
+	.nav-links :global(a.active) {
+		color: #ffffff;
+		background-color: rgba(225, 29, 72, 0.18);
+		border: 1px solid rgba(225, 29, 72, 0.35);
+		text-decoration: none;
+	}
+
+	/* Menú Desplegable de Disciplinas */
+	.nav-dropdown {
+		position: relative;
+		display: inline-block;
+	}
+
+	.dropdown-trigger {
+		color: var(--text-secondary);
+		padding: 0.45rem 0.85rem;
+		font-size: 0.925rem;
+		font-weight: 600;
+		border-radius: var(--radius-sm);
+		cursor: pointer;
+		display: inline-flex;
+		align-items: center;
+		gap: 0.3rem;
+		transition: all var(--transition-fast);
+	}
+
+	.dropdown-trigger:hover {
+		color: var(--text-primary);
+		background-color: var(--bg-card);
+	}
+
+	.arrow-down {
+		font-size: 0.7rem;
+		opacity: 0.7;
+	}
+
+	.dropdown-menu {
+		display: none;
+		position: absolute;
+		top: 100%;
+		left: 0;
+		min-width: 230px;
+		background: var(--bg-card);
+		border: 1px solid var(--border-medium);
+		border-radius: var(--radius-md);
+		padding: 0.5rem;
+		box-shadow: var(--shadow-card);
+		z-index: 60;
+		margin-top: 0.4rem;
+	}
+
+	.nav-dropdown:hover .dropdown-menu {
+		display: flex;
+		flex-direction: column;
+		gap: 0.2rem;
+	}
+
+	.dropdown-menu a {
+		color: var(--text-secondary);
+		padding: 0.5rem 0.75rem;
+		font-size: 0.85rem;
+		font-weight: 500;
+		border-radius: var(--radius-sm);
+		text-decoration: none;
+		display: block;
+		transition: background-color var(--transition-fast), color var(--transition-fast);
+	}
+
+	.dropdown-menu a:hover {
+		background-color: var(--bg-card-hover);
+		color: var(--text-primary);
+	}
+
+	.header-action {
+		display: flex;
+		align-items: center;
+	}
+
+	.header-cta-btn {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.35rem;
+		font-size: 0.825rem;
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
+		background-color: var(--accent-brand);
+		color: #ffffff;
+		padding: 0.45rem 0.95rem;
+		border-radius: var(--radius-md);
+		text-decoration: none;
+		transition: all var(--transition-fast);
+	}
+
+	.header-cta-btn:hover {
+		background-color: #f43f5e;
+		color: #ffffff;
+		transform: translateY(-1px);
+	}
+
+	@media (max-width: 768px) {
+		.brand-sub {
+			display: none;
+		}
+		.nav-dropdown {
+			display: none;
+		}
+		.header-action {
+			display: none;
+		}
+		.nav-links {
+			gap: 0.25rem;
+		}
+	}
+</style>

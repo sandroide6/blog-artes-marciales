@@ -1,0 +1,215 @@
+---
+import { DISCIPLINES_LIST } from '../data/disciplines';
+
+export interface Props {
+  activeId?: string;
+  title?: string;
+  subtitle?: string;
+}
+
+const {
+  activeId,
+  title = 'Cinco Disciplinas, Un Mismo Camino',
+  subtitle = 'Explora el arte tradicional y el combate moderno a través de sus cinco vertientes fundamentales.'
+} = Astro.props;
+---
+
+<section class="disciplines-section">
+  <div class="section-header">
+    <div class="header-pre">
+      <span class="pre-badge">Artes & Estilos</span>
+    </div>
+    <h2 class="section-title">{title}</h2>
+    <p class="section-subtitle">{subtitle}</p>
+  </div>
+
+  <div class="disciplines-grid">
+    {DISCIPLINES_LIST.map((disc) => {
+      const isActive = activeId === disc.id;
+      return (
+        <a
+          href={`/artes/${disc.id}/`}
+          class={`discipline-card ${disc.accentClass} ${isActive ? 'is-active' : ''}`}
+          style={`--card-accent: ${disc.accentColor};`}
+        >
+          <div class="card-bg-glow" aria-hidden="true"></div>
+          
+          <div class="card-top">
+            <span class="card-icon">{disc.icon}</span>
+            {disc.kanji && <span class="card-kanji">{disc.kanji}</span>}
+          </div>
+
+          <div class="card-body">
+            <h3 class="card-name">{disc.name}</h3>
+            <p class="card-origin">📍 {disc.origin}</p>
+            <p class="card-tagline">{disc.tagline}</p>
+          </div>
+
+          <div class="card-action">
+            <span class="action-text">Explorar arte</span>
+            <span class="action-arrow" aria-hidden="true">→</span>
+          </div>
+        </a>
+      );
+    })}
+  </div>
+</section>
+
+<style>
+  .disciplines-section {
+    margin: 3.5rem 0;
+  }
+
+  .section-header {
+    text-align: center;
+    max-width: 680px;
+    margin: 0 auto 2.5rem;
+  }
+
+  .header-pre {
+    margin-bottom: 0.5rem;
+  }
+
+  .pre-badge {
+    display: inline-block;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--accent-brand);
+    background-color: var(--accent-brand-glow);
+    padding: 0.25rem 0.75rem;
+    border-radius: var(--radius-full);
+    border: 1px solid rgba(225, 29, 72, 0.3);
+  }
+
+  .section-title {
+    font-size: clamp(1.75rem, 3vw, 2.35rem);
+    margin-bottom: 0.75rem;
+  }
+
+  .section-subtitle {
+    color: var(--text-muted);
+    font-size: 1.05rem;
+    margin: 0;
+  }
+
+  .disciplines-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap: 1.25rem;
+  }
+
+  .discipline-card {
+    position: relative;
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem 1.25rem 1.25rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    text-decoration: none;
+    transition: transform var(--transition-base), border-color var(--transition-base), box-shadow var(--transition-base);
+    overflow: hidden;
+  }
+
+  .card-bg-glow {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 120px;
+    height: 120px;
+    background: radial-gradient(circle, var(--card-accent) 0%, transparent 70%);
+    opacity: 0.08;
+    transition: opacity var(--transition-base);
+    pointer-events: none;
+  }
+
+  .discipline-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--card-accent);
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 0 15px -3px var(--card-accent);
+  }
+
+  .discipline-card:hover .card-bg-glow {
+    opacity: 0.22;
+  }
+
+  .discipline-card.is-active {
+    border-color: var(--card-accent);
+    background-color: var(--bg-card-hover);
+  }
+
+  .card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+
+  .card-icon {
+    font-size: 2rem;
+    line-height: 1;
+  }
+
+  .card-kanji {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--text-dim);
+    letter-spacing: 0.1em;
+  }
+
+  .card-body {
+    margin-bottom: 1.25rem;
+  }
+
+  .card-name {
+    font-size: 1.25rem;
+    margin: 0 0 0.25rem;
+    color: var(--text-primary);
+  }
+
+  .card-origin {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin: 0 0 0.65rem;
+  }
+
+  .card-tagline {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    line-height: 1.45;
+    margin: 0;
+  }
+
+  .card-action {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 0.85rem;
+    border-top: 1px solid var(--border-subtle);
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    transition: color var(--transition-fast);
+  }
+
+  .discipline-card:hover .card-action {
+    color: var(--card-accent);
+  }
+
+  .action-arrow {
+    transition: transform var(--transition-fast);
+  }
+
+  .discipline-card:hover .action-arrow {
+    transform: translateX(4px);
+  }
+
+  @media (max-width: 640px) {
+    .disciplines-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

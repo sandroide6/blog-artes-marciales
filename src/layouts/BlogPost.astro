@@ -1,0 +1,428 @@
+---
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import BaseHead from '../components/BaseHead.astro';
+import Footer from '../components/Footer.astro';
+import FormattedDate from '../components/FormattedDate.astro';
+import Header from '../components/Header.astro';
+import MartialBadge from '../components/MartialBadge.astro';
+import { getDiscipline, type DisciplineId } from '../data/disciplines';
+
+interface Props {
+	title: string;
+	description: string;
+	pubDate: Date;
+	updatedDate?: Date;
+	heroImage?: ImageMetadata;
+	disciplina?: DisciplineId | string;
+	tipo?: string;
+	dificultad?: string;
+	readingTime?: string;
+	autor?: {
+		name: string;
+		role: string;
+		avatar?: string;
+	};
+	tags?: string[];
+}
+
+const {
+	title,
+	description,
+	pubDate,
+	updatedDate,
+	heroImage,
+	disciplina = 'karate',
+	dificultad,
+	readingTime = '6 min',
+	autor = { name: 'Maestro del Dojo', role: 'Instructor Marcial' },
+	tags = [],
+} = Astro.props;
+
+const discInfo = getDiscipline(disciplina);
+---
+
+<!doctype html>
+<html lang="es">
+	<head>
+		<BaseHead title={`${title} — DOJO & OCTAGON`} description={description} image={heroImage} />
+	</head>
+
+	<body>
+		<Header />
+		<main class="article-layout">
+			<!-- Breadcrumb Navigation -->
+			<nav class="breadcrumbs" aria-label="Navegación de migas de pan">
+				<a href="/">Inicio</a>
+				<span class="breadcrumb-separator" aria-hidden="true">/</span>
+				<a href="/blog/">Blog</a>
+				{disciplina && discInfo && (
+					<>
+						<span class="breadcrumb-separator" aria-hidden="true">/</span>
+						<a href={`/artes/${disciplina}/`}>{discInfo.name}</a>
+					</>
+				)}
+				<span class="breadcrumb-separator" aria-hidden="true">/</span>
+				<span class="breadcrumb-current" aria-current="page">{title}</span>
+			</nav>
+
+			<article class="article-container">
+				<!-- Header del Artículo -->
+				<header class="article-header">
+					{disciplina && (
+						<div class="discipline-badge-wrap">
+							<MartialBadge disciplina={disciplina} size="lg" asLink={true} />
+						</div>
+					)}
+
+					<h1 class="article-title">{title}</h1>
+
+					<p class="article-lead">{description}</p>
+
+					<!-- Metadatos de Publicación y Autor -->
+					<div class="article-metadata">
+						<div class="author-block">
+							<div class="author-avatar" aria-hidden="true">
+								{discInfo?.icon ?? '🥋'}
+							</div>
+							<div class="author-details">
+								<span class="author-name">{autor.name}</span>
+								<span class="author-role">{autor.role}</span>
+							</div>
+						</div>
+
+						<div class="meta-stats">
+							<div class="stat-pill">
+								<span class="stat-icon" aria-hidden="true">📅</span>
+								<FormattedDate date={pubDate} />
+							</div>
+
+							<div class="stat-pill">
+								<span class="stat-icon" aria-hidden="true">⏱️</span>
+								<span>{readingTime} de lectura</span>
+							</div>
+
+							{dificultad && (
+								<div class="stat-pill">
+									<span class="stat-icon" aria-hidden="true">🎯</span>
+									<span class="capitalize">{dificultad}</span>
+								</div>
+							)}
+						</div>
+					</div>
+
+					{updatedDate && (
+						<div class="updated-notice">
+							Actualizado el <FormattedDate date={updatedDate} />
+						</div>
+					)}
+				</header>
+
+				<!-- Imagen Principal (Hero) -->
+				{heroImage && (
+					<div class="article-hero-box">
+						<Image
+							src={heroImage}
+							alt={title}
+							width={1020}
+							height={510}
+							class="hero-media"
+						/>
+					</div>
+				)}
+
+				<!-- Cuerpo del Artículo -->
+				<div class="prose article-body">
+					<slot />
+				</div>
+
+				<!-- Tags y Pie del Artículo -->
+				{tags && tags.length > 0 && (
+					<footer class="article-footer-tags">
+						<span class="tags-title">Etiquetas:</span>
+						<div class="tags-cloud">
+							{tags.map((tag) => (
+								<span class="tag-pill">#{tag}</span>
+							))}
+						</div>
+					</footer>
+				)}
+
+				<!-- Callout de Seguridad Marcial -->
+				<aside class="safety-notice" aria-label="Aviso de seguridad deportiva">
+					<div class="safety-icon" aria-hidden="true">⚠️</div>
+					<div class="safety-content">
+						<strong>Aviso de Seguridad y Responsabilidad Marcial:</strong>
+						<p>
+							Las técnicas de combate y sumisiones descritas en este artículo exigen supervisión técnica calificada. Nunca practiques llaves articulares, estrangulaciones ni golpes a plena potencia sin protecciones reglamentarias ni el consentimiento explícito de tu compañero de entrenamiento.
+						</p>
+					</div>
+				</aside>
+
+				<!-- Botón Volver -->
+				<div class="back-nav">
+					<a href="/blog/" class="back-link">
+						<span aria-hidden="true">←</span> Volver a todos los artículos
+					</a>
+				</div>
+			</article>
+		</main>
+		<Footer />
+	</body>
+</html>
+
+<style>
+	.article-layout {
+		max-width: 920px;
+		margin: 0 auto;
+		padding: 1.5rem 1.25rem 4rem;
+	}
+
+	.breadcrumbs {
+		display: flex;
+		align-items: center;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+		font-size: 0.85rem;
+		color: var(--text-muted);
+		margin-bottom: 2rem;
+	}
+
+	.breadcrumbs a {
+		color: var(--text-muted);
+		text-decoration: none;
+	}
+
+	.breadcrumbs a:hover {
+		color: var(--text-primary);
+	}
+
+	.breadcrumb-separator {
+		opacity: 0.4;
+	}
+
+	.breadcrumb-current {
+		color: var(--text-secondary);
+		max-width: 320px;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
+	.article-container {
+		background-color: var(--bg-card);
+		border: 1px solid var(--border-subtle);
+		border-radius: var(--radius-lg);
+		padding: 2.5rem 2rem;
+	}
+
+	@media (max-width: 640px) {
+		.article-container {
+			padding: 1.5rem 1rem;
+		}
+	}
+
+	.article-header {
+		margin-bottom: 2.5rem;
+		border-bottom: 1px solid var(--border-subtle);
+		padding-bottom: 2rem;
+	}
+
+	.discipline-badge-wrap {
+		margin-bottom: 1.25rem;
+	}
+
+	.article-title {
+		font-size: clamp(2rem, 4vw, 2.85rem);
+		line-height: 1.18;
+		margin: 0 0 1rem;
+		color: var(--text-primary);
+	}
+
+	.article-lead {
+		font-size: 1.2rem;
+		line-height: 1.6;
+		color: var(--text-secondary);
+		margin: 0 0 1.75rem;
+	}
+
+	.article-metadata {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		flex-wrap: wrap;
+		gap: 1.25rem;
+	}
+
+	.author-block {
+		display: flex;
+		align-items: center;
+		gap: 0.85rem;
+	}
+
+	.author-avatar {
+		width: 44px;
+		height: 44px;
+		border-radius: 50%;
+		background-color: var(--bg-secondary);
+		border: 1px solid var(--border-medium);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		font-size: 1.4rem;
+	}
+
+	.author-details {
+		display: flex;
+		flex-direction: column;
+	}
+
+	.author-name {
+		font-size: 0.95rem;
+		font-weight: 700;
+		color: var(--text-primary);
+	}
+
+	.author-role {
+		font-size: 0.775rem;
+		color: var(--text-muted);
+	}
+
+	.meta-stats {
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
+		flex-wrap: wrap;
+	}
+
+	.stat-pill {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.35rem;
+		background: var(--bg-secondary);
+		border: 1px solid var(--border-subtle);
+		padding: 0.35rem 0.75rem;
+		border-radius: var(--radius-full);
+		font-size: 0.8rem;
+		color: var(--text-secondary);
+	}
+
+	.capitalize {
+		text-transform: capitalize;
+	}
+
+	.updated-notice {
+		margin-top: 1rem;
+		font-size: 0.8rem;
+		color: var(--text-dim);
+		font-style: italic;
+	}
+
+	.article-hero-box {
+		width: 100%;
+		border-radius: var(--radius-md);
+		overflow: hidden;
+		margin-bottom: 2.75rem;
+		border: 1px solid var(--border-medium);
+		background-color: var(--bg-secondary);
+	}
+
+	.hero-media {
+		width: 100%;
+		height: auto;
+		display: block;
+		object-fit: cover;
+	}
+
+	.article-body {
+		margin-bottom: 3rem;
+	}
+
+	.article-footer-tags {
+		display: flex;
+		align-items: center;
+		gap: 1rem;
+		flex-wrap: wrap;
+		padding: 1.5rem 0;
+		border-top: 1px solid var(--border-subtle);
+		border-bottom: 1px solid var(--border-subtle);
+		margin-bottom: 2rem;
+	}
+
+	.tags-title {
+		font-size: 0.85rem;
+		font-weight: 700;
+		color: var(--text-primary);
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
+	}
+
+	.tags-cloud {
+		display: flex;
+		gap: 0.5rem;
+		flex-wrap: wrap;
+	}
+
+	.tag-pill {
+		font-size: 0.8rem;
+		color: var(--accent-brand);
+		background-color: var(--accent-brand-glow);
+		border: 1px solid rgba(225, 29, 72, 0.25);
+		padding: 0.25rem 0.65rem;
+		border-radius: var(--radius-sm);
+	}
+
+	.safety-notice {
+		display: flex;
+		gap: 1rem;
+		background-color: rgba(245, 158, 11, 0.08);
+		border: 1px solid rgba(245, 158, 11, 0.3);
+		border-radius: var(--radius-md);
+		padding: 1.25rem;
+		margin-bottom: 2.5rem;
+	}
+
+	.safety-icon {
+		font-size: 1.5rem;
+		line-height: 1;
+	}
+
+	.safety-content strong {
+		color: #f59e0b;
+		display: block;
+		margin-bottom: 0.35rem;
+		font-size: 0.95rem;
+	}
+
+	.safety-content p {
+		margin: 0;
+		font-size: 0.85rem;
+		line-height: 1.5;
+		color: #e2e8f0;
+	}
+
+	.back-nav {
+		text-align: center;
+	}
+
+	.back-link {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.5rem;
+		font-weight: 700;
+		color: var(--text-primary);
+		padding: 0.65rem 1.25rem;
+		background-color: var(--bg-secondary);
+		border: 1px solid var(--border-medium);
+		border-radius: var(--radius-md);
+		text-decoration: none;
+		transition: all var(--transition-fast);
+	}
+
+	.back-link:hover {
+		background-color: var(--bg-card-hover);
+		color: var(--accent-brand);
+		border-color: var(--accent-brand);
+		transform: translateX(-2px);
+	}
+</style>

@@ -1,0 +1,231 @@
+---
+import { getCollection } from 'astro:content';
+import BaseHead from '../components/BaseHead.astro';
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
+import HeroMarcial from '../components/HeroMarcial.astro';
+import DisciplinasGrid from '../components/DisciplinasGrid.astro';
+import ArticleCard from '../components/ArticleCard.astro';
+import { SITE_DESCRIPTION, SITE_TITLE, SITE_TAGLINE } from '../consts';
+
+const allPosts = await getCollection('blog');
+const sortedPosts = allPosts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+// Seleccionar el artículo principal para el Hero (uno con featured o el más reciente)
+const featuredPost = sortedPosts.find((p) => p.data.featured) || sortedPosts[0];
+
+// Artículos destacados para el showcase
+const featuredPosts = sortedPosts.filter((p) => p.data.featured).slice(0, 3);
+
+// Artículos recientes (todos los demás o todos)
+const recentPosts = sortedPosts.slice(0, 6);
+---
+
+<!doctype html>
+<html lang="es">
+	<head>
+		<BaseHead title={`${SITE_TITLE} — ${SITE_TAGLINE}`} description={SITE_DESCRIPTION} />
+	</head>
+	<body>
+		<Header />
+		<main>
+			<!-- Hero Marcial con Artículo Principal -->
+			<HeroMarcial
+				title="El Camino del Guerrero, del Tatami a la Jaula"
+				subtitle="Análisis biomecánico, rigor técnico y la ética del Budo tradicional integrada con las artes marciales mixtas modernas."
+				featuredPost={featuredPost}
+			/>
+
+			<!-- Selector de las 5 Disciplinas Canónicas -->
+			<DisciplinasGrid />
+
+			<!-- Artículos Destacados -->
+			<section class="section-container">
+				<div class="section-header-row">
+					<div>
+						<span class="section-kicker">Guías Maestras</span>
+						<h2 class="section-heading">Artículos Destacados</h2>
+					</div>
+					<a href="/blog/" class="section-view-all">
+						<span>Ver todos ({sortedPosts.length})</span>
+						<span aria-hidden="true">→</span>
+					</a>
+				</div>
+
+				<div class="articles-grid">
+					{featuredPosts.map((post) => (
+						<ArticleCard post={post} />
+					))}
+				</div>
+			</section>
+
+			<!-- Banner de Filosofía Budo -->
+			<section class="budo-banner">
+				<div class="budo-inner">
+					<div class="budo-badge">Valores Fundamentales</div>
+					<h2 class="budo-title">"El verdadero combate es el dominio sobre uno mismo."</h2>
+					<p class="budo-text">
+						La técnica sin moral es peligroso salvajismo; la filosofía sin técnica es mera ilusión. En <strong>DOJO & OCTAGON</strong> rendimos homenaje tanto a la sabiduría milenaria de los maestros de Okinawa y Tailandia como a la precisión científica de los laboratorios modernos de MMA.
+					</p>
+					<div class="budo-cta">
+						<a href="/about/" class="btn-budo">Leer el Manifiesto Marcial</a>
+					</div>
+				</div>
+			</section>
+
+			<!-- Últimas Publicaciones -->
+			<section class="section-container">
+				<div class="section-header-row">
+					<div>
+						<span class="section-kicker">Actualidad Marcial</span>
+						<h2 class="section-heading">Últimas Publicaciones</h2>
+					</div>
+					<a href="/blog/" class="section-view-all">
+						<span>Explorar archivo</span>
+						<span aria-hidden="true">→</span>
+					</a>
+				</div>
+
+				<div class="articles-grid">
+					{recentPosts.map((post) => (
+						<ArticleCard post={post} />
+					))}
+				</div>
+			</section>
+		</main>
+		<Footer />
+	</body>
+</html>
+
+<style>
+	.section-container {
+		margin-bottom: 4.5rem;
+	}
+
+	.section-header-row {
+		display: flex;
+		justify-content: space-between;
+		align-items: flex-end;
+		margin-bottom: 2rem;
+		flex-wrap: wrap;
+		gap: 1rem;
+	}
+
+	.section-kicker {
+		font-size: 0.75rem;
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.1em;
+		color: var(--accent-brand);
+		display: block;
+		margin-bottom: 0.25rem;
+	}
+
+	.section-heading {
+		font-size: clamp(1.6rem, 3vw, 2.1rem);
+		margin: 0;
+	}
+
+	.section-view-all {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.35rem;
+		font-size: 0.9rem;
+		font-weight: 600;
+		color: var(--text-secondary);
+		padding: 0.4rem 0.85rem;
+		border-radius: var(--radius-sm);
+		background-color: var(--bg-card);
+		border: 1px solid var(--border-subtle);
+		transition: all var(--transition-fast);
+	}
+
+	.section-view-all:hover {
+		color: #ffffff;
+		border-color: var(--accent-brand);
+		background-color: var(--bg-card-hover);
+		transform: translateX(2px);
+	}
+
+	.articles-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+		gap: 1.75rem;
+	}
+
+	@media (max-width: 680px) {
+		.articles-grid {
+			grid-template-columns: 1fr;
+		}
+	}
+
+	/* Banner Budo */
+	.budo-banner {
+		position: relative;
+		background: linear-gradient(135deg, rgba(225, 29, 72, 0.15), rgba(21, 27, 36, 0.9) 60%);
+		border: 1px solid rgba(225, 29, 72, 0.3);
+		border-radius: var(--radius-lg);
+		padding: 3rem 2rem;
+		margin-bottom: 4.5rem;
+		overflow: hidden;
+		text-align: center;
+	}
+
+	.budo-inner {
+		max-width: 720px;
+		margin: 0 auto;
+	}
+
+	.budo-badge {
+		display: inline-block;
+		font-size: 0.75rem;
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.1em;
+		color: var(--accent-brand);
+		background-color: var(--bg-primary);
+		padding: 0.25rem 0.75rem;
+		border-radius: var(--radius-full);
+		border: 1px solid rgba(225, 29, 72, 0.4);
+		margin-bottom: 1rem;
+	}
+
+	.budo-title {
+		font-size: clamp(1.6rem, 3.5vw, 2.2rem);
+		line-height: 1.25;
+		color: #ffffff;
+		margin-bottom: 1.25rem;
+	}
+
+	.budo-text {
+		color: var(--text-secondary);
+		font-size: 1.05rem;
+		line-height: 1.7;
+		margin-bottom: 2rem;
+	}
+
+	.budo-cta {
+		display: flex;
+		justify-content: center;
+	}
+
+	.btn-budo {
+		display: inline-flex;
+		align-items: center;
+		padding: 0.75rem 1.6rem;
+		background-color: var(--accent-brand);
+		color: #ffffff;
+		font-weight: 700;
+		border-radius: var(--radius-md);
+		text-decoration: none;
+		box-shadow: 0 4px 14px rgba(225, 29, 72, 0.4);
+		transition: all var(--transition-fast);
+	}
+
+	.btn-budo:hover {
+		background-color: #f43f5e;
+		color: #ffffff;
+		transform: translateY(-2px);
+		box-shadow: 0 6px 20px rgba(225, 29, 72, 0.6);
+	}
+</style>

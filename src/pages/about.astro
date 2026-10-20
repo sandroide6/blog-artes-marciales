@@ -1,0 +1,200 @@
+---
+import { Image } from 'astro:assets';
+import BaseHead from '../components/BaseHead.astro';
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
+import AboutHeroImage from '../assets/blog-placeholder-about.jpg';
+import { SITE_TITLE } from '../consts';
+---
+
+<!doctype html>
+<html lang="es">
+	<head>
+		<BaseHead
+			title={`Filosofía & Manifiesto Marcial — ${SITE_TITLE}`}
+			description="Conoce la misión de DOJO & OCTAGON: tender un puente inquebrantable entre el honor tradicional del Budo y la ciencia del combate contemporáneo."
+			image={AboutHeroImage}
+		/>
+	</head>
+	<body>
+		<Header />
+		<main>
+			<article class="about-container">
+				<header class="about-header">
+					<div class="header-pre">
+						<span class="pre-badge">Manifiesto & Ética</span>
+					</div>
+					<h1 class="about-title">El Puente entre el Tatami Sagrado y la Jaula Moderna</h1>
+					<p class="about-lead">
+						Nuestra misión editorial: rescatar la dignidad, la biomecánica precisa y el pulimento del carácter humano en todas las artes de combate.
+					</p>
+				</header>
+
+				<div class="about-image-wrapper">
+					<Image
+						src={AboutHeroImage}
+						alt="Dojo tradicional y espíritu marcial"
+						width={960}
+						height={480}
+						class="about-img"
+					/>
+				</div>
+
+				<div class="prose about-content">
+					<h2>1. Orígenes y Propósito</h2>
+					<p>
+						En un mundo saturado de sensacionalismo deportivo y violencia vacía, <strong>DOJO & OCTAGON</strong> nace como un bastión de conocimiento marcial riguroso. Creemos firmemente que el combate no es una exhibición de agresividad descontrolada, sino una de las disciplinas humanas más elevadas para la conquista del propio ego y el desarrollo de la templanza.
+					</p>
+					<p>
+						Desde los templos de Okinawa donde se forjó el Karate Shotokan y Goju-Ryu, pasando por las arenas ancestrales de Tailandia donde retumbó el Muay Boran, hasta los gimnasios de Río de Janeiro donde la familia Gracie codificó el Jiu-Jitsu contemporáneo y los octágonos globales de MMA, cada arte marcial encierra verdades biomecánicas y filosóficas que merecen ser estudiadas con reverencia y análisis crítico.
+					</p>
+
+					<blockquote>
+						"El propósito fundamental del Budo no es derrotar a diez mil enemigos, sino conquistar la propia mente cada día."
+						<br />
+						<small>— Principio tradicional de las artes marciales japonesas</small>
+					</blockquote>
+
+					<h2>2. Los Cuatro Pilares de DOJO & OCTAGON</h2>
+
+					<h3>I. Rigor Técnico y Biomecánica Real</h3>
+					<p>
+						Rechazamos las explicaciones esotéricas o mágicas. Todo golpe, palanca, estrangulamiento o transición responde a leyes inmutables de la física: palancas mecánicas, rotación vectorial de cadera, cadenas cinéticas musculares y gestión milimétrica de centros de gravedad.
+					</p>
+
+					<h3>II. Preservación del Código de Honor (Rei)</h3>
+					<p>
+						El respeto mutuo es el único elemento que distingue al artista marcial del agresor común. El saludo marcial no es sumisión, sino el pacto sagrado de que dos atletas emplearán toda su destreza técnica cuidando incondicionalmente la integridad física del otro.
+					</p>
+
+					<h3>III. Universalidad y Multidisciplinariedad</h3>
+					<p>
+						Ningún estilo posee el monopolio de la verdad marcial. El boxeador aprende del juego de cadera del karateca; el practicante de BJJ aprende del clinch y rodillas del tailandés; y el peleador de MMA integra todas las vertientes reconociendo el linaje histórico de cada una.
+					</p>
+
+					<h3>IV. Aplicabilidad al Crecimiento Personal</h3>
+					<p>
+						Las batallas más arduas de la vida moderna se libran fuera del gimnasio: en el trabajo, en la familia y en los momentos de incertidumbre personal. La resiliencia desarrollada al recibir un golpe limpio o al escapar de una sumisión asfixiante es la misma que forja a personas íntegras, pacientes y valientes en la sociedad.
+					</p>
+
+					<hr />
+
+					<h2>3. Nuestro Compromiso Editorial</h2>
+					<p>
+						Cada artículo publicado en esta revista ha sido concebido, estructurado y revisado por practicantes, competidores y educadores marciales. Nos comprometemos a mantener:
+					</p>
+					<ul>
+						<li><strong>Cero Clickbait:</strong> Titulares directos que reflejan con honestidad el contenido técnico.</li>
+						<li><strong>Seguridad en Primer Lugar:</strong> Advertencias claras sobre los riesgos de cada maniobra y la necesidad de supervisión cualificada.</li>
+						<li><strong>Acceso Abierto y Estándar Web Limpio:</strong> Sin muros de pago artificiales, sin librerías lentas y con un rendimiento optimizado al milisegundo.</li>
+					</ul>
+
+					<div class="about-signoff">
+						<span class="signoff-kanji">押忍</span>
+						<p class="signoff-text">
+							<strong>Ossu.</strong> Que tu práctica sea constante, tu mente permanezca abierta y tu espíritu inquebrantable.
+						</p>
+					</div>
+				</div>
+			</article>
+		</main>
+		<Footer />
+	</body>
+</html>
+
+<style>
+	.about-container {
+		max-width: 860px;
+		margin: 0 auto;
+		background-color: var(--bg-card);
+		border: 1px solid var(--border-subtle);
+		border-radius: var(--radius-lg);
+		padding: 3rem 2.5rem;
+	}
+
+	@media (max-width: 640px) {
+		.about-container {
+			padding: 1.5rem 1rem;
+		}
+	}
+
+	.about-header {
+		text-align: center;
+		margin-bottom: 2.5rem;
+	}
+
+	.header-pre {
+		margin-bottom: 0.75rem;
+	}
+
+	.pre-badge {
+		display: inline-block;
+		font-size: 0.75rem;
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.1em;
+		color: var(--accent-brand);
+		background-color: var(--accent-brand-glow);
+		padding: 0.25rem 0.75rem;
+		border-radius: var(--radius-full);
+		border: 1px solid rgba(225, 29, 72, 0.35);
+	}
+
+	.about-title {
+		font-size: clamp(2rem, 3.5vw, 2.75rem);
+		line-height: 1.2;
+		margin-bottom: 1rem;
+	}
+
+	.about-lead {
+		font-size: 1.15rem;
+		color: var(--text-secondary);
+		line-height: 1.6;
+		max-width: 680px;
+		margin: 0 auto;
+	}
+
+	.about-image-wrapper {
+		width: 100%;
+		border-radius: var(--radius-md);
+		overflow: hidden;
+		border: 1px solid var(--border-medium);
+		margin-bottom: 3rem;
+		background-color: var(--bg-secondary);
+	}
+
+	.about-img {
+		width: 100%;
+		height: auto;
+		display: block;
+		object-fit: cover;
+	}
+
+	.about-content {
+		margin: 0 auto;
+	}
+
+	.about-signoff {
+		display: flex;
+		align-items: center;
+		gap: 1.25rem;
+		background: var(--bg-secondary);
+		border: 1px solid var(--border-medium);
+		border-radius: var(--radius-md);
+		padding: 1.25rem 1.75rem;
+		margin-top: 2.5rem;
+	}
+
+	.signoff-kanji {
+		font-size: 2.5rem;
+		font-weight: 800;
+		color: var(--accent-brand);
+		line-height: 1;
+	}
+
+	.signoff-text {
+		margin: 0;
+		font-size: 0.95rem;
+		color: var(--text-primary);
+	}
+</style>
