@@ -1,8 +1,5 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "framework": "astro",
-  "buildCommand": "npm run build",
-  "outputDirectory": "dist",
   "cleanUrls": true,
   "trailingSlash": false,
   "headers": [
@@ -35,6 +32,22 @@
           "value": "strict-origin-when-cross-origin"
         }
       ]
+    }
+  ],
+  "services": {
+    "blog-artes-marciales": {
+      "root": ".",
+      "framework": "astro",
+      "buildCommand": "npm run build"
+    }
+  },
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": {
+        "type": "service",
+        "service": "blog-artes-marciales"
+      }
     }
   ]
 }
